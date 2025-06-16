@@ -16,8 +16,6 @@ for (let x = 0; x < gridSize; x++) {
 
 const gameSquares = document.querySelectorAll('.game_square');
 
-let activeBall = null;
-let target = null;
 let isStartMoving = false;
 let startSquare = null;
 
@@ -43,19 +41,11 @@ gameSquares.forEach(square => {
             }
 
             grid[x][y] = +startSquare.dataset.color;
-            square.dataset.color = startSquare.dataset.color;
-            square.dataset.ball = true;
             grid[startX][startY] = null;
-            delete startSquare.dataset.color;
             delete startSquare.dataset.ball;
             delete startSquare.dataset.active;
-            isStartMoving = !isStartMoving;
-
-            if (processLines()) {
-                return;
-            }
-
-            pushNewBalls();
+            moveBall(path, startSquare.dataset.color);
+            delete startSquare.dataset.color;
 
             return;
         }
@@ -69,6 +59,37 @@ gameSquares.forEach(square => {
         }
     });
 });
+
+function endMoving() {
+    isStartMoving = !isStartMoving;
+    if (processLines()) {
+        return;
+    }
+    pushNewBalls();
+}
+
+function moveBall(path, color) {
+    path.forEach((p, i) => {
+        const [x, y] = p;
+        const square = document.querySelector(`.game_square[data-x="${x}"][data-y="${y}"]`);
+        setTimeout(() => {
+            square.dataset.color = color;
+            square.dataset.ball = true;
+        }, 100 * i);
+
+        if (i === path.length - 1) {
+            setTimeout(() => {
+                endMoving();
+            }, 150 * i);
+            return;
+        }
+
+        setTimeout(() => {
+            delete square.dataset.color;
+            delete square.dataset.ball;
+        }, 125 * i);
+    });
+}
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
