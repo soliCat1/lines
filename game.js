@@ -3,7 +3,6 @@ const grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(null));
 
 const container = document.querySelector('.game_field');
 
-// Генерация клеток
 for (let x = 0; x < gridSize; x++) {
     for (let y = 0; y < gridSize; y++) {
         const cell = document.createElement('div');
