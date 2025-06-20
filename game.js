@@ -1,7 +1,29 @@
 const gridSize = 9;
 const grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(null));
 
+let difficulties = {
+    easy: 3,
+    medium: 4,
+    hard: 5,
+};
+
+let difficulty;
+
 const container = document.querySelector('.game_field');
+const buttons = document.querySelectorAll('button');
+const popup = document.querySelector('.popup');
+
+buttons.forEach(btn => {
+    btn.addEventListener('click', ({ target }) => {
+        target.classList.add('active');
+        difficulty = difficulties[target.dataset.difficult];
+        console.log(difficulty);
+        setTimeout(() => {
+            popup.style.display = 'none';
+            gameStart();
+        }, 1000);
+    });
+});
 
 for (let x = 0; x < gridSize; x++) {
     for (let y = 0; y < gridSize; y++) {
@@ -107,7 +129,8 @@ function getRandomSquare() {
 }
 
 function createBall() {
-    const colorNum = getRandomInt(1, 3);
+    const colorNum = getRandomInt(1, difficulty);
+    console.log(1);
     const square = getRandomSquare();
     const x = +square.dataset.x;
     const y = +square.dataset.y;
@@ -117,10 +140,12 @@ function createBall() {
 }
 
 function pushNewBalls() {
-    createBall();
-    createBall();
-    createBall();
+    for (let i = 0; i < difficulty; i++) {
+        createBall();
+    }
     processLines();
 }
 
-pushNewBalls();
+function gameStart() {
+    pushNewBalls();
+}
