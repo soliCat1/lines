@@ -1,5 +1,7 @@
 const gridSize = 9;
-const grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(null));
+let grid;
+let difficulty;
+let gameSquares;
 
 let difficulties = {
     easy: 3,
@@ -7,79 +9,25 @@ let difficulties = {
     hard: 5,
 };
 
-let difficulty;
-
 const container = document.querySelector('.game_field');
 const buttons = document.querySelectorAll('button');
-const popup = document.querySelector('.popup');
+const popupStart = document.querySelector('.popup_start');
+const popupEnd = document.querySelector('.popup_end');
 
 buttons.forEach(btn => {
     btn.addEventListener('click', ({ target }) => {
         target.classList.add('active');
         difficulty = difficulties[target.dataset.difficult];
-        console.log(difficulty);
         setTimeout(() => {
-            popup.style.display = 'none';
+            popupStart.style.display = 'none';
             gameStart();
+            target.classList.remove('active');
         }, 1000);
     });
 });
 
-for (let x = 0; x < gridSize; x++) {
-    for (let y = 0; y < gridSize; y++) {
-        const cell = document.createElement('div');
-        cell.classList.add('game_square');
-        cell.dataset.x = x;
-        cell.dataset.y = y;
-        container.appendChild(cell);
-    }
-}
-
-const gameSquares = document.querySelectorAll('.game_square');
-
 let isStartMoving = false;
 let startSquare = null;
-
-gameSquares.forEach(square => {
-    square.addEventListener('click', () => {
-        const x = +square.dataset.x;
-        const y = +square.dataset.y;
-
-        if (isStartMoving) {
-            if (square === startSquare) {
-                delete startSquare.dataset.active;
-                isStartMoving = !isStartMoving;
-            }
-            if (grid[x][y] !== null) {
-                return;
-            }
-            const startX = +startSquare.dataset.x;
-            const startY = +startSquare.dataset.y;
-            const path = findPath(startX, startY, x, y);
-
-            if (!path) {
-                return;
-            }
-
-            grid[x][y] = +startSquare.dataset.color;
-            grid[startX][startY] = null;
-            delete startSquare.dataset.ball;
-            delete startSquare.dataset.active;
-            moveBall(path, startSquare.dataset.color);
-            delete startSquare.dataset.color;
-
-            return;
-        }
-
-        if (grid[x][y] === null) {
-            return;
-        } else {
-            isStartMoving = !isStartMoving;
-            startSquare = square;
-            square.dataset.active = true;
-        }
-    });
-});
 
 function endMoving() {
     isStartMoving = !isStartMoving;
@@ -130,7 +78,6 @@ function getRandomSquare() {
 
 function createBall() {
     const colorNum = getRandomInt(1, difficulty);
-    console.log(1);
     const square = getRandomSquare();
     const x = +square.dataset.x;
     const y = +square.dataset.y;
@@ -140,12 +87,77 @@ function createBall() {
 }
 
 function pushNewBalls() {
-    for (let i = 0; i < difficulty; i++) {
+    for (let i = 0; i <= difficulty; i++) {
+        if (isGridFull()) {
+            popupEnd.style.display = 'flex';
+            setTimeout(() => {
+                container.replaceChildren();
+                popupEnd.style.display = 'none';
+                popupStart.style.display = 'flex';
+            }, 1000);
+
+            return;
+        }
         createBall();
     }
     processLines();
 }
 
 function gameStart() {
+    grid = Array.from({ length: gridSize }, () => Array(gridSize).fill(null));
+
+    for (let x = 0; x < gridSize; x++) {
+        for (let y = 0; y < gridSize; y++) {
+            const cell = document.createElement('div');
+            cell.classList.add('game_square');
+            cell.dataset.x = x;
+            cell.dataset.y = y;
+            container.appendChild(cell);
+        }
+    }
+
+    gameSquares = document.querySelectorAll('.game_square');
+
+    gameSquares.forEach(square => {
+        square.addEventListener('click', () => {
+            const x = +square.dataset.x;
+            const y = +square.dataset.y;
+
+            if (isStartMoving) {
+                if (square === startSquare) {
+                    delete startSquare.dataset.active;
+                    isStartMoving = !isStartMoving;
+                }
+                if (grid[x][y] !== null) {
+                    return;
+                }
+                const startX = +startSquare.dataset.x;
+                const startY = +startSquare.dataset.y;
+                const path = findPath(startX, startY, x, y);
+
+                if (!path) {
+                    return;
+                }
+
+                grid[x][y] = +startSquare.dataset.color;
+                grid[startX][startY] = null;
+                delete startSquare.dataset.ball;
+                delete startSquare.dataset.active;
+                moveBall(path, startSquare.dataset.color);
+                delete startSquare.dataset.color;
+
+                return;
+            }
+
+            if (grid[x][y] === null) {
+                return;
+            } else {
+                isStartMoving = !isStartMoving;
+                startSquare = square;
+                square.dataset.active = true;
+            }
+        });
+    });
+
     pushNewBalls();
 }

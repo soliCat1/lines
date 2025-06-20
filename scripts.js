@@ -107,6 +107,17 @@ function removeBalls(coords) {
     });
 }
 
+function isGridFull() {
+    for (let x = 0; x < gridSize; x++) {
+        for (let y = 0; y < gridSize; y++) {
+            if (grid[x][y] === null) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 function processLines() {
     const matched = findLinesToRemove();
     if (matched.length >= 5) {
