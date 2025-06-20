@@ -146,7 +146,8 @@ button.active {
     display: none;
     align-items: center;
     justify-content: center;
-    font-size: 5vw;
+    font-size: 10vw;
     text-align: center;
     color: #cf1e1e;
+    background-color: #33a9c1;
 }
