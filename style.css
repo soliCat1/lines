@@ -23,6 +23,13 @@ body {
     aspect-ratio: 1/1;
 }
 
+@media (max-width: 768px) {
+    .game_field {
+        top: 36%;
+        width: 90%;
+    }
+}
+
 .game_square {
     position: relative;
     width: 100%;
@@ -82,6 +89,17 @@ body {
     transform: translateY(-50%);
     font-size: 10vw;
     color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .counter {
+        position: absolute;
+        top: 80%;
+        left: 50%;
+        transform: translate(-50%);
+        font-size: 20vw;
+        color: #ffffff;
+    }
 }
 
 .popup {
@@ -146,7 +164,8 @@ button.active {
     display: none;
     align-items: center;
     justify-content: center;
-    font-size: 5vw;
+    font-size: 10vw;
     text-align: center;
     color: #cf1e1e;
+    background-color: #33a9c1;
 }
