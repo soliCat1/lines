@@ -89,6 +89,7 @@ function createBall() {
 function pushNewBalls() {
     for (let i = 0; i <= difficulty; i++) {
         if (isGridFull()) {
+            counter.textContent = '0';
             popupEnd.style.display = 'flex';
             setTimeout(() => {
                 container.replaceChildren();
